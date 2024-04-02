@@ -20,6 +20,7 @@ body{
 .info-block:hover{
     border: 1px rgb(85, 108, 240) solid;
     background-color: rgb(255, 255, 255);
+    transform: translateY(-10px);
     img{
         opacity:0.5; 
     }
