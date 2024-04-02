@@ -11,17 +11,24 @@ body{
    font-optical-sizing: auto;
 
 }
+body.dark{
+    background-color: #31363F;
+    color:aliceblue;
+}
+
 .info-block{
     background-color: rgb(236, 236, 236);
     border-radius: 1em;
     position: relative;
-    transition: 1s;
+    transition: 0.5s;
 }
 .info-block:hover{
-    border: 1px rgb(85, 108, 240) solid;
-    background-color: rgb(255, 255, 255);
+    border: 2px rgb(85, 108, 240) solid;
     transform: translateY(-10px);
     img{
         opacity:0.5; 
     }
+}
+.info-block.dark{
+    background: #52585f;
 }
