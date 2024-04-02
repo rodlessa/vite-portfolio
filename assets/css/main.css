@@ -9,6 +9,7 @@
 body{
    font-family: "Roboto Mono", monospace;
    font-optical-sizing: auto;
+   transition: 2s;
 
 }
 body.dark{
