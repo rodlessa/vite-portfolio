@@ -26,6 +26,17 @@
             <div class="flex items-center px-8 m-4 info-block p-8">
                 <div class="grid grid-cols-2 flex items-center">
                     <div>
+                        <img class="object-scale-down h-48 w-48 w-full sm:w-48 md:w-40 lg:w-48 xl:w-64" src="https://nuxt.com/assets/design-kit/icon-green.svg">
+                    </div>
+                    <div class="px-8">
+                        <strong>NuxtJS</strong>
+                        <p class="text-sm md:text-base lg:text-lg">Front-end Framework</p>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center px-8 m-4 info-block p-8">
+                <div class="grid grid-cols-2 flex items-center">
+                    <div>
                         <img class="object-scale-down h-48 w-48 w-full sm:w-48 md:w-40 lg:w-48 xl:w-64" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/1869px-Python-logo-notext.svg.png">
                     </div>
                     <div class="px-8">
@@ -45,6 +56,7 @@
                     </div>
                 </div>
             </div>
+            
         </div>
     </div>
     
