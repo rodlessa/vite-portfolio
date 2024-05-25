@@ -15,6 +15,17 @@
             <div class="flex items-center px-8 m-4 info-block p-8">
                 <div class="grid grid-cols-2 flex items-center">
                     <div>
+                        <img class="object-scale-down h-48 w-48 w-full sm:w-48 md:w-40 lg:w-48 xl:w-64" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Node.js_logo.svg/2560px-Node.js_logo.svg.png">
+                    </div>
+                    <div class="px-8">
+                        <strong>NodeJS</strong>
+                        <p class="text-sm md:text-base lg:text-lg">Backend</p>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center px-8 m-4 info-block p-8">
+                <div class="grid grid-cols-2 flex items-center">
+                    <div>
                         <img class="object-scale-down h-48 w-48 w-full sm:w-48 md:w-40 lg:w-48 xl:w-64" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Vue.js_Logo_2.svg/2367px-Vue.js_Logo_2.svg.png">
                     </div>
                     <div class="px-8">
