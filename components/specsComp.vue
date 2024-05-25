@@ -19,7 +19,7 @@
                     </div>
                     <div class="px-8">
                         <strong>VueJS</strong>
-                        <p class="text-sm md:text-base lg:text-lg">Vite + Nuxt</p>
+                        <p class="text-sm md:text-base lg:text-lg">+ Vite</p>
                     </div>
                 </div>
             </div>
@@ -45,17 +45,7 @@
                     </div>
                 </div>
             </div>
-            <div class="flex items-center px-8 m-4 info-block p-8">
-                <div class="grid grid-cols-2 flex items-center">
-                    <div>
-                        <img class="object-scale-down h-48 w-48 w-full sm:w-48 md:w-40 lg:w-48 xl:w-64" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Ansible_logo.svg/1664px-Ansible_logo.svg.png">
-                    </div>
-                    <div class="px-8">
-                        <strong>DevOps</strong>
-                        <p class="text-sm md:text-base lg:text-lg">CI/CD - Pipelines, Ansible</p>
-                    </div>
-                </div>
-            </div>
+            
             
         </div>
     </div>
