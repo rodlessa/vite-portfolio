@@ -1,3 +1,4 @@
+import { Analytics } from '@vercel/analytics/react';
 
 <script setup lang="ts">
 useHead({

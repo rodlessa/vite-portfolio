@@ -11,6 +11,7 @@
       <p class="nota m-0">Desenvolvo aplicações voltadas para web, especializado em cloud e computação distribuída.</p>
     </div>
   </div>
+
 </template>
 
 <script setup lang="ts">
@@ -18,8 +19,7 @@ import { Typed } from "@duskmoon/vue3-typed-js";
 import type { TypedOptions } from "@duskmoon/vue3-typed-js";
 
 const options: TypedOptions = {
-  cursor: false,
-  strings: ["Analista de Sistemas", "AWS - Architect Solutions", "Backend developer", "Front-end Developer"],
+  strings: ["Analista de Sistemas", "AWS - Architect Solutions", "Backend developer", "Front-end Developer", "Implatação de sistemas"],
   loop: true,
   typeSpeed: 50,
   showCursor: false,
@@ -32,6 +32,6 @@ const options: TypedOptions = {
   margin-top: 1rem;
 }
 .typed {
-  min-height: 50px;
+  min-height: 10vh;
 }
 </style>
