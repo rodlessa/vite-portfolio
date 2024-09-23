@@ -9,7 +9,7 @@
 <img src="" alt="">
 <card>
     <h1></h1>
-    <p>Clinica de Psicologia Ester Lessa, criado com NextJS hospedado da Vercel</p>
+    <p><a href="https://psiesterlessa.com.br" class="text-sky-500">Clinica de Psicologia Ester Lessa</a>, criado com NextJS hospedado na Vercel.</p>
 </card>
                     </div>
                 </div>

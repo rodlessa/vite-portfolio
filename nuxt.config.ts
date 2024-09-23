@@ -13,4 +13,9 @@ export default defineNuxtConfig({
   },
 
   modules: ['@nuxt/content'],
-})
+
+  // Explicitamente inclui o plugin
+  plugins: [
+    '~/plugins/vercel-analytics.client.js'
+  ],
+});
