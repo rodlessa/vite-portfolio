@@ -29,5 +29,7 @@ jobs:
       # Step 4: Copy build to /var/www/html
       - name: Copy to Server
         run: |
-          #copy files
-          sudo cp -r dist/* /var/www/html/
+          # Ensure the /var/www/html/portfolio directory exists
+          sudo mkdir -p /var/www/html/portfolio
+          # Copy client build files to /var/www/html/portfolio
+          sudo cp -r .output/client/* /var/www/html/portfolio/
