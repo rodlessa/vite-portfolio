@@ -29,4 +29,5 @@ jobs:
       # Step 4: Copy build to /var/www/html
       - name: Copy to Server
         run: |
+          #copy files
           sudo cp -r dist/* /var/www/html/
