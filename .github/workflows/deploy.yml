@@ -33,10 +33,10 @@ jobs:
           sudo rm -rf /var/www/html/portfolio/*
           sudo cp -r .output/* /var/www/html/portfolio/
 
-      # Step 5: Restart server process with a process manager
+      # Step 5: Restart server using PM2
       - name: Restart server using PM2
         run: |
           sudo npm install -g pm2  # Ensure pm2 is installed
-          pm2 delete portfolio || true  # Delete existing process if any
+          pm2 describe portfolio && pm2 delete portfolio || echo "No existing PM2 process to delete"  # Conditional delete
           pm2 start /var/www/html/portfolio/server/index.mjs --name portfolio
           pm2 save
