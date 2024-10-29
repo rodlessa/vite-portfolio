@@ -48,6 +48,5 @@ jobs:
 
           # Test SSH connection
           ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST echo "SSH connection successful"
-          
           # Deploy using rsync
           rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./dist/ $SSH_USER@$SSH_HOST:/var/www/html/portfolio
