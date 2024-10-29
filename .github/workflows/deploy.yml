@@ -23,15 +23,20 @@ jobs:
       # Step 3: Install dependencies and build the project
       - name: Install dependencies and build
         run: |
-          npm install
+          npm ci  # Use npm ci for faster installs in CI environments
           npm run build
 
-      # Step 4: Copy build to /var/www/html
-      - name: Copy to Server
+      # Step 4: Deploy build to server
+      - name: Copy build to server directory
         run: |
           sudo mkdir -p /var/www/html/portfolio
-          ls
-          cp -r .output/* /var/www/html/portfolio/
-          cd /var/www/html/portfolio/
-          node server/index.mjs   
-          echo "Server starting!!"
+          sudo rm -rf /var/www/html/portfolio/*
+          sudo cp -r .output/* /var/www/html/portfolio/
+
+      # Step 5: Restart server process with a process manager
+      - name: Restart server using PM2
+        run: |
+          sudo npm install -g pm2  # Ensure pm2 is installed
+          pm2 delete portfolio || true  # Delete existing process if any
+          pm2 start /var/www/html/portfolio/server/index.mjs --name portfolio
+          pm2 save
