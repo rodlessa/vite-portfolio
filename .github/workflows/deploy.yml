@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
     - name: Checkout repository
@@ -15,7 +15,7 @@ jobs:
 
     - name: Setup SSH
       run: |
-        echo "$SSH_PRIVATE_KEY" > private_key
+        echo "$SSH_PRIVATE_KEY" | tr -d '\r' > private_key
         chmod 600 private_key
         eval "$(ssh-agent -s)"
         ssh-add private_key
@@ -29,4 +29,4 @@ jobs:
 
     - name: Copy files to server
       run: |
-        scp -o LogLevel=DEBUG -r dist/* gh-actions@$SSH_HOST:/var/www/html/portfolio
+        scp -r dist/* gh-actions@$SSH_HOST:/var/www/html/portfolio
