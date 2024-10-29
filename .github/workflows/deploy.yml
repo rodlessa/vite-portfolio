@@ -35,7 +35,7 @@ jobs:
           mkdir -p ~/.ssh
           # copy PK
           echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa 
-          # CHMOD
+          ## CHMOD
           chmod 600 ~/.ssh/id_rsa
 
           # Add the SSH host to known hosts to prevent prompt
