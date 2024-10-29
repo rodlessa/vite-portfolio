@@ -26,26 +26,13 @@ jobs:
 
       - name: Deploy files to VPS
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SSH_PASSWD_KEY: ${{ secrets.SSH_PASSWD_KEY }}  # This is optional if you use the SSH agent
-          SSH_HOST: 188.245.152.90
-          SSH_USER: nykot
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PASSWD_KEY: ${{ secrets.SSH_PASSWD_KEY }}
         run: |
-          # Set up SSH keys
-          mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+          # Install sshpass
+          sudo apt-get update
+          sudo apt-get install -y sshpass
           
-          # Start the SSH agent
-          eval $(ssh-agent -s)
-          
-          # Add the SSH key with passphrase (if necessary)
-          if [ -n "$SSH_PASSWD_KEY" ]; then
-            echo "$SSH_PASSWD_KEY" | ssh-add ~/.ssh/id_rsa
-          else
-            ssh-add ~/.ssh/id_rsa
-          fi
-          # Test SSH connection
-          ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST echo "SSH connection successful"
-          # Deploy using rsync
-          rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./dist/ $SSH_USER@$SSH_HOST:/var/www/html/portfolio
+          # Deploy using sshpass and scp
+          sshpass -p "$SSH_PASSWORD" scp -o StrictHostKeyChecking=no -r ./dist/* $SSH_USER@$SSH_HOST:/var/www/html/portfolio
