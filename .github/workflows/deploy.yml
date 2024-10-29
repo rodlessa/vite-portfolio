@@ -24,18 +24,22 @@ jobs:
       - name: Build the project
         run: npm run build
 
+      - name: Print environment variables
+        run: printenv
+
+      - name: Create .ssh directory
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
       - name: Deploy files to VPS
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_USER: ${{ secrets.SSH_USER }}
-          DEPLOY_DIR: "/home/nykot/deploy"
+          DEPLOY_DIR: "/var/www/html/portfolio/"
         run: |
-          # Create .ssh directory and set permissions
-          mkdir -p ~/.ssh
-          # copy PK
-          echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa 
-          ## CHMOD
+          echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa  # Removes Windows-style line endings
           chmod 600 ~/.ssh/id_rsa
 
           # Add the SSH host to known hosts to prevent prompt
