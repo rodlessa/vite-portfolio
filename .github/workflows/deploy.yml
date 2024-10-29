@@ -31,4 +31,4 @@ jobs:
         run: |
           sudo mkdir -p /var/www/html/portfolio
           ls
-          cp .output/* /var/www/html/portfolio
+          cp -r .output/* /var/www/html/portfolio/
