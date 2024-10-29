@@ -31,7 +31,4 @@ jobs:
           SSH_HOST: 188.245.152.90
           SSH_USER: root
         run: |
-          mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
           rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./dist/ $SSH_USER@$SSH_HOST:/var/www/html/portfolio
