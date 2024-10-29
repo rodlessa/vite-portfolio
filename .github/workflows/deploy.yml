@@ -45,7 +45,6 @@ jobs:
           else
             ssh-add ~/.ssh/id_rsa
           fi
-
           # Test SSH connection
           ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST echo "SSH connection successful"
           # Deploy using rsync
