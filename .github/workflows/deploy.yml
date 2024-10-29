@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
       # Step 1: Checkout the repository
@@ -33,8 +33,11 @@ jobs:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
         run: |
-          # Set up SSH agent with private key
+          # Start SSH agent and add the private key
+          eval "$(ssh-agent -s)"  # Starts the SSH agent
           echo "${SSH_PRIVATE_KEY}" | tr -d '\r' | ssh-add - > /dev/null
+          
+          # Add server to known hosts to avoid verification prompt
           ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
 
           # Copy the contents of dist/ to /var/www/html on the server
