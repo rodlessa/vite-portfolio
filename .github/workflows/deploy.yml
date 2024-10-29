@@ -1,34 +1,32 @@
-name: Deploy Vite Portfolio
+name: Deploy
 
 on:
   push:
     branches:
-      - main  # Change to your default branch if different
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repository
+    - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '16'  # Specify your Node.js version here
-
-    - name: Install Dependencies
-      run: npm install
-
-    - name: Build Project
-      run: npm run build
-
-    - name: Copy Build Files to Server
-      env:
-        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        SSH_HOST: ${{ secrets.SSH_HOST }}
+    - name: Setup SSH
       run: |
         echo "$SSH_PRIVATE_KEY" > private_key
         chmod 600 private_key
-        scp -o StrictHostKeyChecking=no -i private_key -r dist/* gh-actions@$SSH_HOST:/var/www/html/portfolio/
+        eval "$(ssh-agent -s)"
+        ssh-add private_key
+        mkdir -p ~/.ssh
+        echo "$SSH_HOST" >> ~/.ssh/known_hosts
+
+    - name: Build the project
+      run: |
+        npm install
+        npm run build
+
+    - name: Copy files to server
+      run: |
+        scp -r dist/* gh-actions@"$SSH_HOST":/var/www/html/portfolio
