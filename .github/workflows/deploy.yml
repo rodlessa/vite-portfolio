@@ -26,8 +26,15 @@ jobs:
 
       - name: Deploy files to VPS
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }} # Add the password secret here
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}  # Password for sudo
         run: |
+          # Install sshpass
+          sudo apt-get update
+          sudo apt-get install -y sshpass
+
           # Create .ssh directory and set permissions
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa  # Removes Windows-style line endings
@@ -35,4 +42,6 @@ jobs:
 
           # Add the SSH host to known hosts to prevent prompt
           ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
-          rsync -avz -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" ./dist/ $SSH_USER@$SSH_HOST:/var/www/html/portfolio
+
+          # Use sshpass to pass the password for sudo while using rsync
+          sshpass -p "$SSH_PASSWORD" rsync -avz -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" ./dist/ $SSH_USER@$SSH_HOST:/var/www/html/portfolio
