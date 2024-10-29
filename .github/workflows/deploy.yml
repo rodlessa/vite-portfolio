@@ -32,3 +32,6 @@ jobs:
           sudo mkdir -p /var/www/html/portfolio
           ls
           cp -r .output/* /var/www/html/portfolio/
+          cd /var/www/html/portfolio/
+          node server/index.mjs   
+          echo "Server starting!!"
