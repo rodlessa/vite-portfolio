@@ -27,6 +27,7 @@ jobs:
       - name: Deploy files to VPS
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_PASSPHRASE: ${{ secrets.SSH_PASSPHRASE }}
           SSH_HOST: <your_vps_ip>
           SSH_USER: <your_vps_user>
         run: |
