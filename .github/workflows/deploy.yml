@@ -1,49 +1,34 @@
-name: Deploy to VPS
+name: Deploy Vite Portfolio
 
 on:
   push:
     branches:
-      - main
+      - main  # Change to your default branch if different
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out the repository
-        uses: actions/checkout@v2
+    - name: Checkout Repository
+      uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '18' # or your preferred version
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'  # Specify your Node.js version here
 
-      - name: Install dependencies
-        run: npm install
+    - name: Install Dependencies
+      run: npm install
 
-      - name: Build the project
-        run: npm run build
+    - name: Build Project
+      run: npm run build
 
-      - name: Print environment variables
-        run: printenv
-
-      - name: Create .ssh directory
-        run: |
-          mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
-
-      - name: Deploy files to VPS
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-          SSH_USER: ${{ secrets.SSH_USER }}
-          DEPLOY_DIR: "/var/www/html/portfolio/"
-        run: |
-          echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa  # Removes Windows-style line endings
-          chmod 600 ~/.ssh/id_rsa
-
-          # Add the SSH host to known hosts to prevent prompt
-          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
-
-          # Deploy files to the public directory on the VPS
-          rsync -avz -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -vvv" ./dist/ $SSH_USER@$SSH_HOST:$DEPLOY_DIR
+    - name: Copy Build Files to Server
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        SSH_HOST: ${{ secrets.SSH_HOST }}
+      run: |
+        echo "$SSH_PRIVATE_KEY" > private_key
+        chmod 600 private_key
+        scp -o StrictHostKeyChecking=no -i private_key -r dist/* gh-actions@$SSH_HOST:/var/www/html/portfolio/
