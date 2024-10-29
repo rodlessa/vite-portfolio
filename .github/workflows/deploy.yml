@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
       # Step 1: Checkout the repository
@@ -33,8 +33,18 @@ jobs:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
         run: |
-          ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
-          ssh-add - <<< "$SSH_PRIVATE_KEY"
-          rsync -avz --progress dist/ $SSH_USER@$SSH_HOST:/var/www/html/
+          # Ensure .ssh directory exists
+          mkdir -p ~/.ssh
 
-        # scp -r dist/* $SSH_USER@$SSH_HOST:/var/www/html
+          # Add server to known hosts
+          ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
+
+          # Save the private key and set permissions
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+
+          # Use rsync to copy files to the remote server
+          rsync -avz -e "ssh -i ~/.ssh/deploy_key" dist/ $SSH_USER@$SSH_HOST:/var/www/html/
+
+          # Cleanup private key after use
+          rm -f ~/.ssh/deploy_key
