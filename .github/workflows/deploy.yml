@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: self-hosted
+    runs-on: self-hosted  # Make sure this runs on your self-hosted runner
 
     steps:
       # Step 1: Checkout the repository
@@ -26,26 +26,7 @@ jobs:
           npm install
           npm run build
 
-      # Step 4: Deploy build to the remote server
-      - name: Deploy to Server
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SSH_USER: ${{ secrets.SSH_USER }}
-          SSH_HOST: ${{ secrets.SSH_HOST }}
+      # Step 4: Copy build to /var/www/html
+      - name: Copy to Server
         run: |
-          # Ensure .ssh directory exists
-          mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
-          echo ${{ secrets.SSH_PRIVATE_KEY }} > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
-          chmod 600 ~/.ssh/known_hosts
-
-          # Test SSH connection
-          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "echo Connected successfully"
-
-          # Use rsync to copy files to the remote server
-          rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/html/
-
-          # Cleanup (optional)
-          rm -f ~/.ssh/id_rsa
+          sudo cp -r dist/* /var/www/html/
