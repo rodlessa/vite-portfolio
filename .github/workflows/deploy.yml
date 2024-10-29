@@ -28,8 +28,6 @@ jobs:
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }} # Add the password secret here
         run: |
-          # Update
-          sudo apt-get update
           # Create .ssh directory and set permissions
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa  # Removes Windows-style line endings
