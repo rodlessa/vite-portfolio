@@ -46,4 +46,4 @@ jobs:
           ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
 
           # Deploy files to the public directory on the VPS
-          rsync -avz -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" ./dist/ $SSH_USER@$SSH_HOST:$DEPLOY_DIR
+          rsync -avz -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -vvv" ./dist/ $SSH_USER@$SSH_HOST:$DEPLOY_DIR
