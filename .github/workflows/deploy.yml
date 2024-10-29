@@ -28,4 +28,13 @@ jobs:
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }} # Add the password secret here
         run: |
+          # Update
           sudo apt-get update
+          # Create .ssh directory and set permissions
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa  # Removes Windows-style line endings
+          chmod 600 ~/.ssh/id_rsa
+
+          # Add the SSH host to known hosts to prevent prompt
+          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
+          rsync -avz -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" ./dist/ $SSH_USER@$SSH_HOST:/var/www/html/portfolio
