@@ -1,32 +1,41 @@
-name: Deploy
+name: Deploy Vue Project
 
 on:
   push:
     branches:
-      - main
+      - main  # Deploys on push to the main branch
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: self-hosted
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      # Step 1: Checkout the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-    - name: Setup SSH
-      run: |
-        echo "$SSH_PRIVATE_KEY" | tr -d '\r' > private_key
-        chmod 600 private_key
-        eval "$(ssh-agent -s)"
-        ssh-add private_key
-        mkdir -p ~/.ssh
-        ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
+      # Step 2: Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'  # Use your required Node version
 
-    - name: Build the project
-      run: |
-        npm install
-        npm run build
+      # Step 3: Install dependencies and build the project
+      - name: Install dependencies and build
+        run: |
+          npm install
+          npm run build
 
-    - name: Copy files to server
-      run: |
-        scp -r dist/* gh-actions@$SSH_HOST:/var/www/html/portfolio
+      # Step 4: Copy build to remote server
+      - name: Deploy to Server
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+        run: |
+          # Set up SSH agent with private key
+          echo "${SSH_PRIVATE_KEY}" | tr -d '\r' | ssh-add - > /dev/null
+          ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
+
+          # Copy the contents of dist/ to /var/www/html on the server
+          scp -r dist/* $SSH_USER@$SSH_HOST:/var/www/html
