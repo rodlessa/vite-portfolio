@@ -16,7 +16,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '16' # or your preferred version
+          node-version: '16' # Adjust if needed
 
       - name: Install dependencies
         run: npm install
@@ -28,10 +28,13 @@ jobs:
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_PASSPHRASE: ${{ secrets.SSH_PASSPHRASE }}
-          SSH_HOST: <your_vps_ip>
-          SSH_USER: <your_vps_user>
+          SSH_HOST: ${{ secrets.SSH_HOST }} # Stored as a secret
+          SSH_USER: ${{ secrets.SSH_USER }} # Stored as a secret
         run: |
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./dist/ $SSH_USER@$SSH_HOST:/var/www/html/portfolio
+          # Test SSH connection
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $SSH_USER@$SSH_HOST echo "SSH connection successful"
+          # Rsync to deploy
+          rsync -avz -e "ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa" ./dist/ $SSH_USER@$SSH_HOST:/var/www/html/portfolio
