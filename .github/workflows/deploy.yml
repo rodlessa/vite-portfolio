@@ -33,4 +33,8 @@ jobs:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
         run: |
-          scp -r dist/* $SSH_USER@$SSH_HOST:/var/www/html
+          ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
+          ssh-add - <<< "$SSH_PRIVATE_KEY"
+          rsync -avz --progress dist/ $SSH_USER@$SSH_HOST:/var/www/html/
+
+        # scp -r dist/* $SSH_USER@$SSH_HOST:/var/www/html
