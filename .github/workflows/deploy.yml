@@ -34,6 +34,7 @@ jobs:
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           # Test SSH connection
+
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $SSH_USER@$SSH_HOST echo "SSH connection successful"
           # Deploy using rsync
           rsync -avz -e "ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa" ./dist/ $SSH_USER@$SSH_HOST:/var/www/html/portfolio
