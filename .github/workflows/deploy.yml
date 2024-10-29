@@ -38,7 +38,7 @@ jobs:
 
           # Add server to known hosts
           ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
-          #
+          
           # Save the private key and set permissions
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
