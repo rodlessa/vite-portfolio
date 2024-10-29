@@ -35,23 +35,21 @@ jobs:
         run: |
           # Ensure .ssh directory exists
           mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
 
-          # Decode private key
-          echo "$SSH_PRIVATE_KEY" | base64 --decode > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
+          # Create SSH private key file
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
 
           # Add remote server to known_hosts
           ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
-          # Set permissions for id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          
           # Test SSH connection
-          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "echo Connected successfully"
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "echo Connected successfully"
 
           # Use rsync to copy files to the remote server
-          rsync -avz -e "ssh -i ~/.ssh/deploy_key" dist/ $SSH_USER@$SSH_HOST:/var/www/html/
+          rsync -avz -e "ssh -i ~/.ssh/id_rsa" dist/ $SSH_USER@$SSH_HOST:/var/www/html/
 
-          # Cleanup
-          rm -f ~/.ssh/deploy_key
+          # Cleanup (optional)
+          rm -f ~/.ssh/id_rsa
