@@ -26,7 +26,7 @@ jobs:
           npm install
           npm run build
 
-      # Step 4: Copy build to remote server
+      # Step 4: Deploy build to the remote server
       - name: Deploy to Server
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -36,15 +36,22 @@ jobs:
           # Ensure .ssh directory exists
           mkdir -p ~/.ssh
 
-          # Add server to known hosts
-          ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
-          
-          # Save the private key and set permissions
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          # Decode private key
+          echo "$SSH_PRIVATE_KEY" | base64 --decode > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
+
+          # Add remote server to known_hosts
+          ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+          # Set permissions for id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          
+          # Test SSH connection
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "echo Connected successfully"
 
           # Use rsync to copy files to the remote server
           rsync -avz -e "ssh -i ~/.ssh/deploy_key" dist/ $SSH_USER@$SSH_HOST:/var/www/html/
 
-          # Cleanup private key after use
+          # Cleanup
           rm -f ~/.ssh/deploy_key
