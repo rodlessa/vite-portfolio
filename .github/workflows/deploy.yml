@@ -30,4 +30,5 @@ jobs:
       - name: Copy to Server
         run: |
           sudo mkdir -p /var/www/html/portfolio
+          
           sudo cp -r .output/client/* /var/www/html/portfolio/
