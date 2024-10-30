@@ -27,7 +27,8 @@ jobs:
         run: |
           npm ci  # Faster installs in CI environments
           npm run build
-
+      - name: Check current user
+        run: whoami
       # Step 4: Deploy build to server directory
       - name: Copy build to server directory
         run: |
