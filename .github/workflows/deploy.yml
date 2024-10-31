@@ -26,5 +26,5 @@ jobs:
 
       - name: Copy Files to Web Server
         run: |
-          sudo cp -r dist/* /var/www/html/  # Copy build artifacts to /var/www/html/
-          sudo chown -R www-data:www-data /var/www/html/  # Ensure the correct ownership
+          sudo cp -r dist/* /var/www/html/
+          sudo chown -R www-data:www-data /var/www/html/
