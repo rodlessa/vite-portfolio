@@ -1,43 +1,40 @@
-name: Deploy Vue Project
+name: Deploy Vue App
 
 on:
   push:
     branches:
-      - main  # Deploys on push to the main branch
+      - main
 
 jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest  # Use GitHub-hosted runner
+  deploy:
+    runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository
-      - name: Checkout Repository
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'  # Adjust to your Node version
+          node-version: '16'
 
-      # Step 3: Install dependencies and build the project
       - name: Install dependencies and build
         run: |
           npm install
           npm run build
 
-      # Step 4: Deploy to remote server via SSH
+      - name: Configure SSH
+        env:
+          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$DEPLOY_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
       - name: Deploy to Server
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
         run: |
-          # SSH into the server using the existing private key
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $SSH_USER@$SSH_HOST << 'EOF'
-            # Commands to run on the server
-            sudo mkdir -p /var/www/html/portfolio
-            sudo cp -r /path/to/local/build/* /var/www/html/portfolio/
-            cd /var/www/html/portfolio/
-            pm2 describe 0 >/dev/null && pm2 delete 0 || echo "No process with ID 0 to delete"
-            pm2 start server/index.mjs
-          EOF
+          scp -i ~/.ssh/deploy_key -r dist/* $SSH_USER@$SSH_HOST:/var/www/html
