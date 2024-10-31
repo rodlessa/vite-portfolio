@@ -7,19 +7,20 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: self-hosted  # Make sure this runs on your self-hosted runner
+    runs-on: self-hosted  # Ensure this runs on your self-hosted runner
 
     steps:
-      # Step 1: Checkout the repository
+      # Step 1: Checkout the repository with SSH key
       - name: Checkout Repository
         uses: actions/checkout@v3
         with:
           ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
       # Step 2: Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'  # Use your required Node version
+          node-version: '18'  # Adjust to your Node version
 
       # Step 3: Install dependencies and build the project
       - name: Install dependencies and build
@@ -27,8 +28,7 @@ jobs:
           npm install
           npm run build
 
-      # Step 4: Copy build to /var/www/html
-      - name: Copy to Server
+      - name: Copy build to server directory
         run: |
           sudo mkdir -p /var/www/html/portfolio
           ls
