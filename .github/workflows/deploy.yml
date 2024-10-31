@@ -7,14 +7,12 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: self-hosted  # Ensure this runs on your self-hosted runner
+    runs-on: ubuntu-latest  # Use GitHub-hosted runner
 
     steps:
       # Step 1: Checkout the repository with SSH key
       - name: Checkout Repository
         uses: actions/checkout@v3
-        with:
-          ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       # Step 2: Set up Node.js
       - name: Set up Node.js
@@ -28,11 +26,23 @@ jobs:
           npm install
           npm run build
 
-      - name: Copy build to server directory
+      # Step 4: Deploy to remote server via SSH
+      - name: Deploy to Server
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_USER: ${{ secrets.SSH_HOST }}
+          REMOTE_HOST: ${{ secrets.SSH_USER }}
         run: |
-          sudo mkdir -p /var/www/html/portfolio
-          ls
-          cp -r .output/* /var/www/portfolio/
-          cd /var/www/portfolio/
-          pm2 describe 0 >/dev/null && pm2 delete 0 || echo "No process with ID 0 to delete"
-          pm2 start server/index.mjs
+          # Add SSH key and disable strict host key checking for the session
+          echo "$SSH_PRIVATE_KEY" > private_key.pem
+          chmod 600 private_key.pem
+          ssh -o StrictHostKeyChecking=no -i private_key.pem $REMOTE_USER@$REMOTE_HOST << 'EOF'
+            # Commands to run on the server
+            sudo mkdir -p /var/www/html/portfolio
+            sudo cp -r /path/to/local/build/* /var/www/html/portfolio/
+            cd /var/www/html/portfolio/
+            pm2 describe 0 >/dev/null && pm2 delete 0 || echo "No process with ID 0 to delete"
+            pm2 start server/index.mjs
+EOF
+          # Clean up private key
+          rm private_key.pem
