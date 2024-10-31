@@ -1,26 +1,51 @@
-name: Build and Deploy
+name: Deploy Vue.js Application
 
 on:
   push:
     branches:
-      - main
+      - main  # Adjust this to your main branch name
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
 
-      - name: Install dependencies
-        run: |
-          npm install
-          npm run build
-      - name: Deploy
-        env:
-          SSH_USER: ${{ secrets.SSH_USER }}
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-          DEPLOY_PASSWORD: ${{ secrets.SSH_PRIVATE_KEY }}  # Referencing the secret
-        run: |
-          echo "$DEPLOY_PASSWORD" | sshpass ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST 'sudo -S cp -r /path/to/dist/* /var/www/html'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'  # Specify your Node.js version
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build the application
+      run: npm run build
+
+    - name: Deploy to server
+      env:
+        PM2_HOME: /home/username/.pm2  # Adjust this to the actual PM2 home directory
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}  # Store your private key in GitHub Secrets
+        HOST: ${{ secrets.HOST }}  # Your server's IP or hostname
+        USER: ${{ secrets.USER }}  # Your server's user
+      run: |
+        # Set up SSH
+        mkdir -p ~/.ssh
+        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
+
+        # Connect to the server and manage PM2
+        ssh $USER@$HOST << 'EOF'
+        # Check if the PM2 instance is running
+        if pm2 show my-vue-app > /dev/null; then
+            echo "Stopping existing PM2 instance..."
+            pm2 stop my-vue-app
+        fi
+
+        # Start the new instance
+        echo "Starting new PM2 instance..."
+        pm2 start /path/to/your/dist/server.js --name my-vue-app  # Adjust this to your actual server.js path
+        EOF
