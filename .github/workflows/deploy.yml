@@ -1,30 +1,42 @@
-name: Deploy Vite Portfolio
+name: Deploy Vue Project
 
 on:
   push:
     branches:
-      - main  # Trigger this workflow on pushes to the main branch
+      - main  # Deploys on push to the main branch
 
 jobs:
-  build:
-    runs-on: self-hosted  # Use a self-hosted runner
+  build-and-deploy:
+    runs-on: self-hosted  # Make sure this runs on your self-hosted runner
 
     steps:
+      # Step 1: Checkout the repository
       - name: Checkout Repository
-        uses: actions/checkout@v3  # Checkout the code from the repository
+        uses: actions/checkout@v3
 
-      - name: Install Node.js
-        uses: actions/setup-node@v2
+      # Step 2: Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: '18'  # Specify the Node.js version (adjust as needed)
+          node-version: '18'  # Use your required Node version
 
-      - name: Install Dependencies
-        run: npm install  # Install project dependencies
-
-      - name: Build Project
-        run: npm run build  # Build the Vite project
-
-      - name: Copy Files to Web Server
+      # Step 3: Install dependencies and build the project
+      - name: Install dependencies and build
         run: |
-          sudo cp -r dist/* /var/www/html/
-          sudo chown -R www-data:www-data /var/www/html/
+          npm ci  # Use npm ci for faster installs in CI environments
+          npm run build
+
+      # Step 4: Deploy build to server
+      - name: Copy build to server directory
+        run: |
+          sudo mkdir -p /var/www/html/portfolio
+          sudo rm -rf /var/www/html/portfolio/*
+          sudo cp -r .output/* /var/www/html/portfolio/
+
+      # Step 5: Restart server using PM2
+      - name: Restart server using PM2
+        run: |
+          sudo npm install -g pm2  # Ensure pm2 is installed
+          pm2 describe portfolio && pm2 delete portfolio || echo "No existing PM2 process to delete"  # Conditional delete
+          pm2 start /var/www/html/portfolio/server/index.mjs --name portfolio
+          pm2 save
