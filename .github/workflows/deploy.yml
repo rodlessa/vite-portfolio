@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest  # Use GitHub-hosted runner
 
     steps:
-      # Step 1: Checkout the repository with SSH key
+      # Step 1: Checkout the repository
       - name: Checkout Repository
         uses: actions/checkout@v3
 
@@ -30,19 +30,17 @@ jobs:
       - name: Deploy to Server
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          REMOTE_USER: ${{ secrets.SSH_HOST }}
-          REMOTE_HOST: ${{ secrets.SSH_USER }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          
         run: |
-          # Add SSH key and disable strict host key checking for the session
           echo "$SSH_PRIVATE_KEY" > private_key.pem
           chmod 600 private_key.pem
           ssh -o StrictHostKeyChecking=no -i private_key.pem $SSH_USER@$SSH_HOST << 'EOF'
-            # Commands to run on the server
             sudo mkdir -p /var/www/html/portfolio
             sudo cp -r /path/to/local/build/* /var/www/html/portfolio/
             cd /var/www/html/portfolio/
             pm2 describe 0 >/dev/null && pm2 delete 0 || echo "No process with ID 0 to delete"
             pm2 start server/index.mjs
-            EOF
-          # Clean up private key
+          EOF
           rm private_key.pem
