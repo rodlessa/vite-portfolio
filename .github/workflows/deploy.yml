@@ -43,6 +43,6 @@ jobs:
             cd /var/www/html/portfolio/
             pm2 describe 0 >/dev/null && pm2 delete 0 || echo "No process with ID 0 to delete"
             pm2 start server/index.mjs
-EOF
+            EOF
           # Clean up private key
           rm private_key.pem
